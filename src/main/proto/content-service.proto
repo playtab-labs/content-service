@@ -1,0 +1,153 @@
+syntax = "proto3";
+
+package content.v1;
+
+option java_multiple_files = true;
+option java_package = "com.playtab.contentservice.grpc.proto.v1";
+option java_outer_classname = "ContentProto";
+
+service ContentService {
+  rpc GetFoodTrucks(GetFoodTrucksRequest) returns (GetFoodTrucksResponse);
+  rpc GetPubs(GetPubsRequest) returns (GetPubsResponse);
+  rpc GetMdItems(GetMdItemsRequest) returns (GetMdItemsResponse);
+  rpc GetMdItemDetail(GetMdItemDetailRequest) returns (GetMdItemDetailResponse);
+  rpc GetNotices(GetNoticesRequest) returns (GetNoticesResponse);
+  rpc GetNoticeDetail(GetNoticeDetailRequest) returns (GetNoticeDetailResponse);
+}
+
+message PageRequest {
+  int32 page = 1;
+  int32 size = 2;
+}
+
+message PageInfo {
+  int32 page = 1;
+  int32 size = 2;
+  int64 total_elements = 3;
+  int32 total_pages = 4;
+  bool has_next = 5;
+}
+
+message GetFoodTrucksRequest {
+  string locale = 1;
+  bool only_visible = 2;
+}
+
+message GetFoodTrucksResponse {
+  repeated FoodTruckItem food_trucks = 1;
+}
+
+message FoodTruckItem {
+  int64 id = 1;
+  string name = 2;
+  string thumbnail_image_url = 3;
+  string short_description = 4;
+  int32 display_order = 5;
+}
+
+message GetPubsRequest {
+  string locale = 1;
+  bool only_visible = 2;
+}
+
+message GetPubsResponse {
+  repeated PubItem pubs = 1;
+}
+
+message PubItem {
+  int64 id = 1;
+  string college_name = 2;
+  string thumbnail_image_url = 3;
+  bool is_name_confirmed = 4;
+  int32 display_order = 5;
+}
+
+message GetMdItemsRequest {
+  string locale = 1;
+  bool only_visible = 2;
+  PageRequest page_request = 3;
+}
+
+message GetMdItemsResponse {
+  repeated MdItemSummary items = 1;
+  PageInfo page_info = 2;
+}
+
+message MdItemSummary {
+  int64 id = 1;
+  string name = 2;
+  string thumbnail_image_url = 3;
+  int32 price = 4;
+  bool is_sold_out = 5;
+}
+
+message GetMdItemDetailRequest {
+  string locale = 1;
+  int64 md_item_id = 2;
+}
+
+message GetMdItemDetailResponse {
+  MdItemDetail item = 1;
+}
+
+message MdItemDetail {
+  int64 id = 1;
+  string name = 2;
+  string thumbnail_image_url = 3;
+  string detail_image_url = 4;
+  int32 price = 5;
+  bool is_sold_out = 6;
+  string product_description = 7;
+  string detail_description = 8;
+  repeated MdOptionGroup option_groups = 9;
+}
+
+message MdOptionGroup {
+  int64 id = 1;
+  string name = 2;
+  int32 display_order = 3;
+  repeated MdOptionValue values = 4;
+}
+
+message MdOptionValue {
+  int64 id = 1;
+  string value_name = 2;
+  int32 extra_price = 3;
+  bool is_sold_out = 4;
+  int32 display_order = 5;
+}
+
+message GetNoticesRequest {
+  string locale = 1;
+  bool only_visible = 2;
+  PageRequest page_request = 3;
+}
+
+message GetNoticesResponse {
+  repeated NoticeSummary notices = 1;
+  PageInfo page_info = 2;
+}
+
+message NoticeSummary {
+  int64 id = 1;
+  string title = 2;
+  string posted_at = 3;
+  bool is_pinned = 4;
+}
+
+message GetNoticeDetailRequest {
+  string locale = 1;
+  int64 notice_id = 2;
+}
+
+message GetNoticeDetailResponse {
+  NoticeDetail notice = 1;
+}
+
+message NoticeDetail {
+  int64 id = 1;
+  string title = 2;
+  string content = 3;
+  string posted_at = 4;
+  bool is_pinned = 5;
+}
