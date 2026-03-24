@@ -1,5 +1,6 @@
 package com.playtab.contentservice.entity;
 
+import com.playtab.contentservice.entity.enums.ContentType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

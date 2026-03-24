@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.0.4'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'com.google.protobuf' version '0.9.4'
 }
 
 group = 'com.playtab'
@@ -27,6 +28,7 @@ dependencies {
 	implementation 'io.grpc:grpc-protobuf'
 	implementation 'io.grpc:grpc-stub'
 	implementation 'io.grpc:grpc-netty-shaded'
+	compileOnly 'org.apache.tomcat:annotations-api:6.0.53' // [추가] generated 코드에서 필요할 수 있음
 
 	// DB
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -42,6 +44,24 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+protobuf { // proto 코드 생성 설정
+	protoc {
+		artifact = "com.google.protobuf:protoc:3.25.3"
+	}
+	plugins {
+		grpc {
+			artifact = "io.grpc:protoc-gen-grpc-java:1.66.0"
+		}
+	}
+	generateProtoTasks {
+		all().configureEach {
+			plugins {
+				grpc {}
+			}
+		}
+	}
 }
 
 tasks.named('test') {

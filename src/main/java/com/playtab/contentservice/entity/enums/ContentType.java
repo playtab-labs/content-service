@@ -1,4 +1,4 @@
-package com.playtab.contentservice.entity;
+package com.playtab.contentservice.entity.enums;
 
 public enum ContentType {
     PUB,
