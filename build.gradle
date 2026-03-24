@@ -2,7 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.0.4'
 	id 'io.spring.dependency-management' version '1.1.7'
-	id 'com.google.protobuf' version '0.9.4' // [추가] proto -> java/gRPC 코드 생성 플러그인
+	id 'com.google.protobuf' version '0.9.4'
 }
 
 group = 'com.playtab'
@@ -56,21 +56,10 @@ protobuf { // proto 코드 생성 설정
 		}
 	}
 	generateProtoTasks {
-		all().each { task ->
-			task.plugins {
+		all().configureEach {
+			plugins {
 				grpc {}
 			}
-		}
-	}
-}
-
-sourceSets { // 생성된 소스 디렉토리를 자바 소스로 인식
-	main {
-		java {
-			srcDirs += [
-					'build/generated/source/proto/main/java',
-					'build/generated/source/proto/main/grpc'
-			]
 		}
 	}
 }
