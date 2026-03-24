@@ -1,39 +1,18 @@
 package com.playtab.contentservice.grpc;
 
-import com.playtab.contentservice.entity.FoodTruckContent; // 푸드트럭 엔티티 사용
-import com.playtab.contentservice.entity.PubContent; // 주점 엔티티 사용
-import com.playtab.contentservice.entity.MdContent; // MD 엔티티 사용
-import com.playtab.contentservice.entity.Notice; // 공지 엔티티 사용
-import com.playtab.contentservice.entity.MdOptionValue; // MD 옵션 값 엔티티 사용
-import com.playtab.contentservice.entity.MdOptionGroup; // MD 옵션 그룹 엔티티 사용
-import com.playtab.contentservice.grpc.proto.v1.GetNoticesRequest; // proto request
-import com.playtab.contentservice.grpc.proto.v1.GetNoticesResponse; // proto response
-import com.playtab.contentservice.grpc.proto.v1.NoticeSummary; // proto 응답 item
-import com.playtab.contentservice.grpc.proto.v1.GetNoticeDetailRequest; // proto request
-import com.playtab.contentservice.grpc.proto.v1.GetNoticeDetailResponse; // proto response
-import com.playtab.contentservice.grpc.proto.v1.NoticeDetail; // proto 상세 응답 item
-import com.playtab.contentservice.grpc.proto.v1.GetMdItemsRequest; // proto request
-import com.playtab.contentservice.grpc.proto.v1.GetMdItemsResponse; // proto response
-import com.playtab.contentservice.grpc.proto.v1.MdItemSummary; // proto 응답 item
-import com.playtab.contentservice.grpc.proto.v1.GetMdItemDetailRequest; // proto request
-import com.playtab.contentservice.grpc.proto.v1.GetMdItemDetailResponse; // proto response
-import com.playtab.contentservice.grpc.proto.v1.MdItemDetail; // proto 상세 응답 item
-import com.playtab.contentservice.grpc.proto.v1.PageInfo; // 페이지 정보 응답
-import com.playtab.contentservice.grpc.proto.v1.GetPubsRequest; // proto request
-import com.playtab.contentservice.grpc.proto.v1.GetPubsResponse; // proto response
-import com.playtab.contentservice.grpc.proto.v1.PubItem; // proto 응답 Item
-import com.playtab.contentservice.grpc.proto.v1.GetFoodTrucksRequest; // proto request
-import com.playtab.contentservice.grpc.proto.v1.GetFoodTrucksResponse; // proto response
-import com.playtab.contentservice.grpc.proto.v1.FoodTruckItem; // proto 응답 item
-import com.playtab.contentservice.grpc.proto.v1.ContentServiceGrpc;
+import com.playtab.contentservice.entity.*;
+import com.playtab.contentservice.entity.MdOptionGroup;
+import com.playtab.contentservice.entity.MdOptionValue;
+import com.playtab.contentservice.grpc.proto.v1.*;
 import com.playtab.contentservice.service.ContentQueryService;
 import io.grpc.stub.StreamObserver;
-import java.util.List; // 목록 처리
-import java.util.Optional; // Optional 처리
 import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
-import org.springframework.data.domain.Page; // 페이지 결과 사용
-import org.springframework.data.domain.PageRequest; // pageable 생성
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+
+import java.util.List;
+import java.util.Optional;
 
 @GrpcService // gRPC 서비스로 등록
 @RequiredArgsConstructor // final 필드 생성자 자동 주입
