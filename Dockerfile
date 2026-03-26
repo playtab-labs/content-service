@@ -1,7 +1,7 @@
 FROM eclipse-temurin:21-jre AS runtime
 
 WORKDIR /app
-COPY build/libs/content-service-*.jar app.jar
+COPY build/libs/contentservice-*.jar app.jar
 
 EXPOSE 9096
 
