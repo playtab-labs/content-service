@@ -1,0 +1,15 @@
+services:
+  content-service:
+    container_name: content-service
+    image: ${ECR_IMAGE}
+    ports:
+      - "9096:9096"
+    env_file:
+      - .env
+    restart: unless-stopped
+    networks:
+      - playtap
+
+networks:
+  playtap:
+    external: true
