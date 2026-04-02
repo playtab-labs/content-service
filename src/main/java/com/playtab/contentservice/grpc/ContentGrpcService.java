@@ -95,9 +95,9 @@ public class ContentGrpcService extends ContentServiceGrpc.ContentServiceImplBas
     @Override
     public void getMdItems(GetMdItemsRequest request,
                            StreamObserver<GetMdItemsResponse> responseObserver) {
-        // proto pageRequest -> Spring PageRequest 변환
+        // proto pageRequest -> Spring PageRequest 변환 (size 미전달 시 기본값 20)
         int page = request.getPageRequest().getPage();
-        int size = request.getPageRequest().getSize();
+        int size = request.getPageRequest().getSize() > 0 ? request.getPageRequest().getSize() : 20;
 
         PageRequest pageable = PageRequest.of(page, size);
 
@@ -146,9 +146,9 @@ public class ContentGrpcService extends ContentServiceGrpc.ContentServiceImplBas
     @Override
     public void getNotices(GetNoticesRequest request,
                            StreamObserver<GetNoticesResponse> responseObserver) {
-        // proto pageRequest -> Spring PageRequest 변환
+        // proto pageRequest -> Spring PageRequest 변환 (size 미전달 시 기본값 20)
         int page = request.getPageRequest().getPage();
-        int size = request.getPageRequest().getSize();
+        int size = request.getPageRequest().getSize() > 0 ? request.getPageRequest().getSize() : 20;
 
         PageRequest pageable = PageRequest.of(page, size);
 
