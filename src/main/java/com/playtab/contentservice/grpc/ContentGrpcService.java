@@ -168,6 +168,7 @@ public class ContentGrpcService extends ContentServiceGrpc.ContentServiceImplBas
                     .setTitle(title)
                     .setPostedAt(notice.getPostedAt() == null ? "" : notice.getPostedAt().toString())
                     .setIsPinned(notice.isPinned())
+                    .setImageUrl(notice.getImageUrl() == null ? "" : notice.getImageUrl())
                     .build();
 
             responseBuilder.addNotices(item);
@@ -284,6 +285,7 @@ public class ContentGrpcService extends ContentServiceGrpc.ContentServiceImplBas
                 .setContent(notice.getContent().getOrDefault(request.getLocale(), ""))
                 .setPostedAt(notice.getPostedAt() == null ? "" : notice.getPostedAt().toString())
                 .setIsPinned(notice.isPinned())
+                .setImageUrl(notice.getImageUrl() == null ? "" : notice.getImageUrl())
                 .build();
 
         // 최종 응답 생성
