@@ -134,6 +134,7 @@ message NoticeSummary {
   string posted_at = 3;
   bool is_pinned = 4;
   string image_url = 5;
+  string content_preview = 6;
 }
 
 message GetNoticeDetailRequest {
