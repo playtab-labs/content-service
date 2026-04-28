@@ -18,6 +18,9 @@ import java.util.Optional;
 @RequiredArgsConstructor // final 필드 생성자 자동 주입
 public class ContentGrpcService extends ContentServiceGrpc.ContentServiceImplBase {
 
+    // 공지 목록 미리보기 본문 최대 길이 (코드 포인트 기준)
+    private static final int NOTICE_CONTENT_PREVIEW_MAX_LENGTH = 150;
+
     // 조회 로직을 담은 service 주입
     private final ContentQueryService contentQueryService;
 
@@ -162,10 +165,15 @@ public class ContentGrpcService extends ContentServiceGrpc.ContentServiceImplBas
             // locale에 맞는 title 추출, 없으면 빈 문자열
             String title = notice.getTitle().getOrDefault(request.getLocale(), "");
 
+            // locale에 맞는 content 추출 후 미리보기 길이로 자르기
+            String content = notice.getContent().getOrDefault(request.getLocale(), "");
+            String contentPreview = truncateForPreview(content, NOTICE_CONTENT_PREVIEW_MAX_LENGTH);
+
             // entity -> proto item 변환
             NoticeSummary item = NoticeSummary.newBuilder()
                     .setId(notice.getId())
                     .setTitle(title)
+                    .setContentPreview(contentPreview)
                     .setPostedAt(notice.getPostedAt() == null ? "" : notice.getPostedAt().toString())
                     .setIsPinned(notice.isPinned())
                     .setImageUrl(notice.getImageUrl() == null ? "" : notice.getImageUrl())
@@ -296,5 +304,17 @@ public class ContentGrpcService extends ContentServiceGrpc.ContentServiceImplBas
         // 응답 전송
         responseObserver.onNext(response);
         responseObserver.onCompleted();
+    }
+
+    // 코드 포인트 기준으로 잘라 surrogate pair(이모지 등) 깨짐을 방지
+    private static String truncateForPreview(String text, int maxLength) {
+        if (text == null || text.isEmpty()) {
+            return "";
+        }
+        if (text.codePointCount(0, text.length()) <= maxLength) {
+            return text;
+        }
+        int endIndex = text.offsetByCodePoints(0, maxLength);
+        return text.substring(0, endIndex) + "...";
     }
 }
