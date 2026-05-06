@@ -15,7 +15,9 @@ public enum ErrorCode {
     FOOD_TRUCK_NOT_FOUND(Status.NOT_FOUND, "Food truck not found"),
 
     INVALID_LOCALE(Status.INVALID_ARGUMENT, "Invalid locale"),
-    INTERNAL_ERROR(Status.INTERNAL, "Internal server error");
+    INTERNAL_ERROR(Status.INTERNAL, "Internal server error"),
+    ADMIN_REQUIRED(Status.PERMISSION_DENIED, "Admin role required"),
+    INVALID_ARGUMENT(Status.INVALID_ARGUMENT, "Invalid argument");
 
     private final Status status;
     private final String message;

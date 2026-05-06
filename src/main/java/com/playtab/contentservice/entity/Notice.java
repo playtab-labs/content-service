@@ -39,4 +39,28 @@ public class Notice extends BaseTimeEntity {
 
     @Column(name = "image_url", length = 500)
     private String imageUrl;
+
+    public static Notice create(Map<String, String> title, Map<String, String> content,
+                                LocalDateTime postedAt, boolean isPinned, boolean isVisible,
+                                String imageUrl) {
+        Notice notice = new Notice();
+        notice.title = title != null ? title : new HashMap<>();
+        notice.content = content != null ? content : new HashMap<>();
+        notice.postedAt = postedAt;
+        notice.isPinned = isPinned;
+        notice.isVisible = isVisible;
+        notice.imageUrl = imageUrl;
+        return notice;
+    }
+
+    public void update(Map<String, String> title, Map<String, String> content,
+                       LocalDateTime postedAt, boolean isPinned, boolean isVisible,
+                       String imageUrl) {
+        this.title = title != null ? title : new HashMap<>();
+        this.content = content != null ? content : new HashMap<>();
+        this.postedAt = postedAt;
+        this.isPinned = isPinned;
+        this.isVisible = isVisible;
+        this.imageUrl = imageUrl;
+    }
 }

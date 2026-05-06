@@ -13,6 +13,10 @@ service ContentService {
   rpc GetMdItemDetail(GetMdItemDetailRequest) returns (GetMdItemDetailResponse);
   rpc GetNotices(GetNoticesRequest) returns (GetNoticesResponse);
   rpc GetNoticeDetail(GetNoticeDetailRequest) returns (GetNoticeDetailResponse);
+
+  rpc AdminCreateNotice(AdminCreateNoticeRequest) returns (AdminCreateNoticeResponse);
+  rpc AdminUpdateNotice(AdminUpdateNoticeRequest) returns (AdminUpdateNoticeResponse);
+  rpc AdminDeleteNotice(AdminDeleteNoticeRequest) returns (AdminDeleteNoticeResponse);
 }
 
 message PageRequest {
@@ -153,4 +157,51 @@ message NoticeDetail {
   string posted_at = 4;
   bool is_pinned = 5;
   string image_url = 6;
+}
+
+message AdminNotice {
+  int64 id = 1;
+  map<string, string> title = 2;
+  map<string, string> content = 3;
+  string posted_at = 4;
+  bool is_pinned = 5;
+  bool is_visible = 6;
+  string image_url = 7;
+  string created_at = 8;
+  string updated_at = 9;
+}
+
+message AdminCreateNoticeRequest {
+  map<string, string> title = 1;
+  map<string, string> content = 2;
+  string posted_at = 3;
+  bool is_pinned = 4;
+  bool is_visible = 5;
+  string image_url = 6;
+}
+
+message AdminCreateNoticeResponse {
+  AdminNotice notice = 1;
+}
+
+message AdminUpdateNoticeRequest {
+  int64 id = 1;
+  map<string, string> title = 2;
+  map<string, string> content = 3;
+  string posted_at = 4;
+  bool is_pinned = 5;
+  bool is_visible = 6;
+  string image_url = 7;
+}
+
+message AdminUpdateNoticeResponse {
+  AdminNotice notice = 1;
+}
+
+message AdminDeleteNoticeRequest {
+  int64 id = 1;
+}
+
+message AdminDeleteNoticeResponse {
+  bool success = 1;
 }
