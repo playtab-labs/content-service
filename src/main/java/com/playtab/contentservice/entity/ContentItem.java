@@ -31,4 +31,20 @@ public class ContentItem extends BaseTimeEntity {
 
     @Column(name = "display_order", nullable = false)
     private int displayOrder = 0;
+
+    public static ContentItem create(ContentType contentType, String thumbnailImageUrl,
+                                     boolean isVisible, int displayOrder) {
+        ContentItem item = new ContentItem();
+        item.contentType = contentType;
+        item.thumbnailImageUrl = thumbnailImageUrl;
+        item.isVisible = isVisible;
+        item.displayOrder = displayOrder;
+        return item;
+    }
+
+    public void update(String thumbnailImageUrl, boolean isVisible, int displayOrder) {
+        this.thumbnailImageUrl = thumbnailImageUrl;
+        this.isVisible = isVisible;
+        this.displayOrder = displayOrder;
+    }
 }

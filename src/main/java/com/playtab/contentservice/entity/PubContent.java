@@ -29,4 +29,19 @@ public class PubContent extends BaseTimeEntity {
 
     @Column(name = "is_name_confirmed", nullable = false)
     private boolean isNameConfirmed = false;
+
+    public static PubContent create(ContentItem contentItem,
+                                    Map<String, String> collegeName,
+                                    boolean isNameConfirmed) {
+        PubContent pub = new PubContent();
+        pub.contentItem = contentItem;
+        pub.collegeName = new HashMap<>(collegeName);
+        pub.isNameConfirmed = isNameConfirmed;
+        return pub;
+    }
+
+    public void update(Map<String, String> collegeName, boolean isNameConfirmed) {
+        this.collegeName = new HashMap<>(collegeName);
+        this.isNameConfirmed = isNameConfirmed;
+    }
 }

@@ -17,7 +17,9 @@ public enum ErrorCode {
     INVALID_LOCALE(Status.INVALID_ARGUMENT, "Invalid locale"),
     INTERNAL_ERROR(Status.INTERNAL, "Internal server error"),
     ADMIN_REQUIRED(Status.PERMISSION_DENIED, "Admin role required"),
-    INVALID_ARGUMENT(Status.INVALID_ARGUMENT, "Invalid argument");
+    INVALID_ARGUMENT(Status.INVALID_ARGUMENT, "Invalid argument"),
+    MD_OPTION_GROUP_NOT_FOUND(Status.NOT_FOUND, "MD option group not found"),
+    MD_OPTION_VALUE_NOT_FOUND(Status.NOT_FOUND, "MD option value not found");
 
     private final Status status;
     private final String message;

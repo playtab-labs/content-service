@@ -7,7 +7,10 @@ import com.playtab.contentservice.entity.MdOptionValue;
 import com.playtab.contentservice.exception.GlobalGrpcExceptionHandler;
 import com.playtab.contentservice.grpc.proto.v1.*;
 import com.playtab.contentservice.service.ContentQueryService;
+import com.playtab.contentservice.service.FoodTruckCommandService;
+import com.playtab.contentservice.service.MdCommandService;
 import com.playtab.contentservice.service.NoticeCommandService;
+import com.playtab.contentservice.service.PubCommandService;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -28,6 +31,9 @@ public class ContentGrpcService extends ContentServiceGrpc.ContentServiceImplBas
     private final ContentQueryService contentQueryService;
 
     private final NoticeCommandService noticeCommandService;
+    private final FoodTruckCommandService foodTruckCommandService;
+    private final PubCommandService pubCommandService;
+    private final MdCommandService mdCommandService;
     private final GlobalGrpcExceptionHandler globalGrpcExceptionHandler;
 
     @Override
@@ -401,6 +407,303 @@ public class ContentGrpcService extends ContentServiceGrpc.ContentServiceImplBas
                 .setImageUrl(notice.getImageUrl() == null ? "" : notice.getImageUrl())
                 .setCreatedAt(notice.getCreatedAt() == null ? "" : notice.getCreatedAt().toString())
                 .setUpdatedAt(notice.getUpdatedAt() == null ? "" : notice.getUpdatedAt().toString())
+                .build();
+    }
+
+    @Override
+    public void adminCreateFoodTruck(AdminCreateFoodTruckRequest request,
+                                     StreamObserver<AdminCreateFoodTruckResponse> responseObserver) {
+        try {
+            GrpcIdentityInterceptor.requireAdmin();
+            FoodTruckContent created = foodTruckCommandService.create(
+                    request.getNameMap(), request.getShortDescriptionMap(),
+                    request.getThumbnailImageUrl(), request.getIsVisible(), request.getDisplayOrder());
+            responseObserver.onNext(AdminCreateFoodTruckResponse.newBuilder()
+                    .setFoodTruck(toAdminFoodTruckProto(created)).build());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(globalGrpcExceptionHandler.toStatusRuntimeException(e));
+        }
+    }
+
+    @Override
+    public void adminUpdateFoodTruck(AdminUpdateFoodTruckRequest request,
+                                     StreamObserver<AdminUpdateFoodTruckResponse> responseObserver) {
+        try {
+            GrpcIdentityInterceptor.requireAdmin();
+            FoodTruckContent updated = foodTruckCommandService.update(
+                    request.getId(), request.getNameMap(), request.getShortDescriptionMap(),
+                    request.getThumbnailImageUrl(), request.getIsVisible(), request.getDisplayOrder());
+            responseObserver.onNext(AdminUpdateFoodTruckResponse.newBuilder()
+                    .setFoodTruck(toAdminFoodTruckProto(updated)).build());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(globalGrpcExceptionHandler.toStatusRuntimeException(e));
+        }
+    }
+
+    @Override
+    public void adminDeleteFoodTruck(AdminDeleteFoodTruckRequest request,
+                                     StreamObserver<AdminDeleteFoodTruckResponse> responseObserver) {
+        try {
+            GrpcIdentityInterceptor.requireAdmin();
+            foodTruckCommandService.delete(request.getId());
+            responseObserver.onNext(AdminDeleteFoodTruckResponse.newBuilder().setSuccess(true).build());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(globalGrpcExceptionHandler.toStatusRuntimeException(e));
+        }
+    }
+
+    @Override
+    public void adminCreatePub(AdminCreatePubRequest request,
+                               StreamObserver<AdminCreatePubResponse> responseObserver) {
+        try {
+            GrpcIdentityInterceptor.requireAdmin();
+            PubContent created = pubCommandService.create(
+                    request.getCollegeNameMap(), request.getIsNameConfirmed(),
+                    request.getThumbnailImageUrl(), request.getIsVisible(), request.getDisplayOrder());
+            responseObserver.onNext(AdminCreatePubResponse.newBuilder()
+                    .setPub(toAdminPubProto(created)).build());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(globalGrpcExceptionHandler.toStatusRuntimeException(e));
+        }
+    }
+
+    @Override
+    public void adminUpdatePub(AdminUpdatePubRequest request,
+                               StreamObserver<AdminUpdatePubResponse> responseObserver) {
+        try {
+            GrpcIdentityInterceptor.requireAdmin();
+            PubContent updated = pubCommandService.update(
+                    request.getId(), request.getCollegeNameMap(), request.getIsNameConfirmed(),
+                    request.getThumbnailImageUrl(), request.getIsVisible(), request.getDisplayOrder());
+            responseObserver.onNext(AdminUpdatePubResponse.newBuilder()
+                    .setPub(toAdminPubProto(updated)).build());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(globalGrpcExceptionHandler.toStatusRuntimeException(e));
+        }
+    }
+
+    @Override
+    public void adminDeletePub(AdminDeletePubRequest request,
+                               StreamObserver<AdminDeletePubResponse> responseObserver) {
+        try {
+            GrpcIdentityInterceptor.requireAdmin();
+            pubCommandService.delete(request.getId());
+            responseObserver.onNext(AdminDeletePubResponse.newBuilder().setSuccess(true).build());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(globalGrpcExceptionHandler.toStatusRuntimeException(e));
+        }
+    }
+
+    @Override
+    public void adminCreateMdItem(AdminCreateMdItemRequest request,
+                                  StreamObserver<AdminCreateMdItemResponse> responseObserver) {
+        try {
+            GrpcIdentityInterceptor.requireAdmin();
+            MdContent created = mdCommandService.createItem(
+                    request.getNameMap(), request.getPrice(),
+                    request.getProductDescriptionMap(), request.getDetailDescriptionMap(),
+                    request.getThumbnailImageUrl(), request.getDetailImageUrl(),
+                    request.getIsSoldOut(), request.getIsVisible(), request.getDisplayOrder());
+            responseObserver.onNext(AdminCreateMdItemResponse.newBuilder()
+                    .setMdItem(toAdminMdItemProto(created)).build());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(globalGrpcExceptionHandler.toStatusRuntimeException(e));
+        }
+    }
+
+    @Override
+    public void adminUpdateMdItem(AdminUpdateMdItemRequest request,
+                                  StreamObserver<AdminUpdateMdItemResponse> responseObserver) {
+        try {
+            GrpcIdentityInterceptor.requireAdmin();
+            MdContent updated = mdCommandService.updateItem(
+                    request.getId(), request.getNameMap(), request.getPrice(),
+                    request.getProductDescriptionMap(), request.getDetailDescriptionMap(),
+                    request.getThumbnailImageUrl(), request.getDetailImageUrl(),
+                    request.getIsSoldOut(), request.getIsVisible(), request.getDisplayOrder());
+            responseObserver.onNext(AdminUpdateMdItemResponse.newBuilder()
+                    .setMdItem(toAdminMdItemProto(updated)).build());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(globalGrpcExceptionHandler.toStatusRuntimeException(e));
+        }
+    }
+
+    @Override
+    public void adminDeleteMdItem(AdminDeleteMdItemRequest request,
+                                  StreamObserver<AdminDeleteMdItemResponse> responseObserver) {
+        try {
+            GrpcIdentityInterceptor.requireAdmin();
+            mdCommandService.deleteItem(request.getId());
+            responseObserver.onNext(AdminDeleteMdItemResponse.newBuilder().setSuccess(true).build());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(globalGrpcExceptionHandler.toStatusRuntimeException(e));
+        }
+    }
+
+    @Override
+    public void adminCreateMdOptionGroup(AdminCreateMdOptionGroupRequest request,
+                                         StreamObserver<AdminCreateMdOptionGroupResponse> responseObserver) {
+        try {
+            GrpcIdentityInterceptor.requireAdmin();
+            MdOptionGroup created = mdCommandService.createOptionGroup(
+                    request.getMdItemId(), request.getNameMap(), request.getDisplayOrder());
+            responseObserver.onNext(AdminCreateMdOptionGroupResponse.newBuilder()
+                    .setOptionGroup(toAdminMdOptionGroupProto(created)).build());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(globalGrpcExceptionHandler.toStatusRuntimeException(e));
+        }
+    }
+
+    @Override
+    public void adminUpdateMdOptionGroup(AdminUpdateMdOptionGroupRequest request,
+                                         StreamObserver<AdminUpdateMdOptionGroupResponse> responseObserver) {
+        try {
+            GrpcIdentityInterceptor.requireAdmin();
+            MdOptionGroup updated = mdCommandService.updateOptionGroup(
+                    request.getId(), request.getNameMap(), request.getDisplayOrder());
+            responseObserver.onNext(AdminUpdateMdOptionGroupResponse.newBuilder()
+                    .setOptionGroup(toAdminMdOptionGroupProto(updated)).build());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(globalGrpcExceptionHandler.toStatusRuntimeException(e));
+        }
+    }
+
+    @Override
+    public void adminDeleteMdOptionGroup(AdminDeleteMdOptionGroupRequest request,
+                                         StreamObserver<AdminDeleteMdOptionGroupResponse> responseObserver) {
+        try {
+            GrpcIdentityInterceptor.requireAdmin();
+            mdCommandService.deleteOptionGroup(request.getId());
+            responseObserver.onNext(AdminDeleteMdOptionGroupResponse.newBuilder().setSuccess(true).build());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(globalGrpcExceptionHandler.toStatusRuntimeException(e));
+        }
+    }
+
+    @Override
+    public void adminCreateMdOptionValue(AdminCreateMdOptionValueRequest request,
+                                         StreamObserver<AdminCreateMdOptionValueResponse> responseObserver) {
+        try {
+            GrpcIdentityInterceptor.requireAdmin();
+            MdOptionValue created = mdCommandService.createOptionValue(
+                    request.getOptionGroupId(), request.getValueNameMap(),
+                    request.getExtraPrice(), request.getIsSoldOut(), request.getDisplayOrder());
+            responseObserver.onNext(AdminCreateMdOptionValueResponse.newBuilder()
+                    .setOptionValue(toAdminMdOptionValueProto(created)).build());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(globalGrpcExceptionHandler.toStatusRuntimeException(e));
+        }
+    }
+
+    @Override
+    public void adminUpdateMdOptionValue(AdminUpdateMdOptionValueRequest request,
+                                         StreamObserver<AdminUpdateMdOptionValueResponse> responseObserver) {
+        try {
+            GrpcIdentityInterceptor.requireAdmin();
+            MdOptionValue updated = mdCommandService.updateOptionValue(
+                    request.getId(), request.getValueNameMap(),
+                    request.getExtraPrice(), request.getIsSoldOut(), request.getDisplayOrder());
+            responseObserver.onNext(AdminUpdateMdOptionValueResponse.newBuilder()
+                    .setOptionValue(toAdminMdOptionValueProto(updated)).build());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(globalGrpcExceptionHandler.toStatusRuntimeException(e));
+        }
+    }
+
+    @Override
+    public void adminDeleteMdOptionValue(AdminDeleteMdOptionValueRequest request,
+                                         StreamObserver<AdminDeleteMdOptionValueResponse> responseObserver) {
+        try {
+            GrpcIdentityInterceptor.requireAdmin();
+            mdCommandService.deleteOptionValue(request.getId());
+            responseObserver.onNext(AdminDeleteMdOptionValueResponse.newBuilder().setSuccess(true).build());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(globalGrpcExceptionHandler.toStatusRuntimeException(e));
+        }
+    }
+
+    private static AdminFoodTruck toAdminFoodTruckProto(FoodTruckContent ft) {
+        ContentItem ci = ft.getContentItem();
+        return AdminFoodTruck.newBuilder()
+                .setId(ft.getId())
+                .putAllName(ft.getName())
+                .putAllShortDescription(ft.getShortDescription())
+                .setThumbnailImageUrl(ci.getThumbnailImageUrl() == null ? "" : ci.getThumbnailImageUrl())
+                .setDisplayOrder(ci.getDisplayOrder())
+                .setIsVisible(ci.isVisible())
+                .setCreatedAt(ft.getCreatedAt() == null ? "" : ft.getCreatedAt().toString())
+                .setUpdatedAt(ft.getUpdatedAt() == null ? "" : ft.getUpdatedAt().toString())
+                .build();
+    }
+
+    private static AdminPub toAdminPubProto(PubContent pub) {
+        ContentItem ci = pub.getContentItem();
+        return AdminPub.newBuilder()
+                .setId(pub.getId())
+                .putAllCollegeName(pub.getCollegeName())
+                .setIsNameConfirmed(pub.isNameConfirmed())
+                .setThumbnailImageUrl(ci.getThumbnailImageUrl() == null ? "" : ci.getThumbnailImageUrl())
+                .setDisplayOrder(ci.getDisplayOrder())
+                .setIsVisible(ci.isVisible())
+                .setCreatedAt(pub.getCreatedAt() == null ? "" : pub.getCreatedAt().toString())
+                .setUpdatedAt(pub.getUpdatedAt() == null ? "" : pub.getUpdatedAt().toString())
+                .build();
+    }
+
+    private static AdminMdItem toAdminMdItemProto(MdContent md) {
+        ContentItem ci = md.getContentItem();
+        return AdminMdItem.newBuilder()
+                .setId(md.getId())
+                .putAllName(md.getName())
+                .setPrice(md.getPrice())
+                .putAllProductDescription(md.getProductDescription())
+                .putAllDetailDescription(md.getDetailDescription())
+                .setThumbnailImageUrl(ci.getThumbnailImageUrl() == null ? "" : ci.getThumbnailImageUrl())
+                .setDetailImageUrl(md.getDetailImageUrl() == null ? "" : md.getDetailImageUrl())
+                .setIsSoldOut(md.isSoldOut())
+                .setDisplayOrder(ci.getDisplayOrder())
+                .setIsVisible(ci.isVisible())
+                .setCreatedAt(md.getCreatedAt() == null ? "" : md.getCreatedAt().toString())
+                .setUpdatedAt(md.getUpdatedAt() == null ? "" : md.getUpdatedAt().toString())
+                .build();
+    }
+
+    private static AdminMdOptionGroup toAdminMdOptionGroupProto(MdOptionGroup group) {
+        return AdminMdOptionGroup.newBuilder()
+                .setId(group.getId())
+                .setMdItemId(group.getMdContent().getId())
+                .putAllName(group.getName())
+                .setDisplayOrder(group.getDisplayOrder())
+                .setCreatedAt(group.getCreatedAt() == null ? "" : group.getCreatedAt().toString())
+                .setUpdatedAt(group.getUpdatedAt() == null ? "" : group.getUpdatedAt().toString())
+                .build();
+    }
+
+    private static AdminMdOptionValue toAdminMdOptionValueProto(MdOptionValue value) {
+        return AdminMdOptionValue.newBuilder()
+                .setId(value.getId())
+                .setOptionGroupId(value.getOptionGroup().getId())
+                .putAllValueName(value.getValueName())
+                .setExtraPrice(value.getExtraPrice())
+                .setIsSoldOut(value.isSoldOut())
+                .setDisplayOrder(value.getDisplayOrder())
+                .setCreatedAt(value.getCreatedAt() == null ? "" : value.getCreatedAt().toString())
+                .setUpdatedAt(value.getUpdatedAt() == null ? "" : value.getUpdatedAt().toString())
                 .build();
     }
 }

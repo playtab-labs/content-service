@@ -29,4 +29,17 @@ public class MdOptionGroup extends BaseTimeEntity {
 
     @Column(name = "display_order", nullable = false)
     private int displayOrder = 0;
+
+    public static MdOptionGroup create(MdContent mdContent, Map<String, String> name, int displayOrder) {
+        MdOptionGroup group = new MdOptionGroup();
+        group.mdContent = mdContent;
+        group.name = new HashMap<>(name);
+        group.displayOrder = displayOrder;
+        return group;
+    }
+
+    public void update(Map<String, String> name, int displayOrder) {
+        this.name = new HashMap<>(name);
+        this.displayOrder = displayOrder;
+    }
 }

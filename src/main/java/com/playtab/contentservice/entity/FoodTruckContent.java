@@ -30,4 +30,19 @@ public class FoodTruckContent extends BaseTimeEntity {
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "short_description", columnDefinition = "jsonb")
     private Map<String, String> shortDescription = new HashMap<>();
+
+    public static FoodTruckContent create(ContentItem contentItem,
+                                          Map<String, String> name,
+                                          Map<String, String> shortDescription) {
+        FoodTruckContent ft = new FoodTruckContent();
+        ft.contentItem = contentItem;
+        ft.name = new HashMap<>(name);
+        ft.shortDescription = shortDescription != null ? new HashMap<>(shortDescription) : new HashMap<>();
+        return ft;
+    }
+
+    public void update(Map<String, String> name, Map<String, String> shortDescription) {
+        this.name = new HashMap<>(name);
+        this.shortDescription = shortDescription != null ? new HashMap<>(shortDescription) : new HashMap<>();
+    }
 }
