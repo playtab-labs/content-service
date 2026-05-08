@@ -1,10 +1,13 @@
 package com.playtab.contentservice.grpc;
 
+import com.playtab.contentservice.config.GrpcIdentityInterceptor;
 import com.playtab.contentservice.entity.*;
 import com.playtab.contentservice.entity.MdOptionGroup;
 import com.playtab.contentservice.entity.MdOptionValue;
+import com.playtab.contentservice.exception.GlobalGrpcExceptionHandler;
 import com.playtab.contentservice.grpc.proto.v1.*;
 import com.playtab.contentservice.service.ContentQueryService;
+import com.playtab.contentservice.service.NoticeCommandService;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -23,6 +26,9 @@ public class ContentGrpcService extends ContentServiceGrpc.ContentServiceImplBas
 
     // 조회 로직을 담은 service 주입
     private final ContentQueryService contentQueryService;
+
+    private final NoticeCommandService noticeCommandService;
+    private final GlobalGrpcExceptionHandler globalGrpcExceptionHandler;
 
     @Override
     public void getFoodTrucks(GetFoodTrucksRequest request,
@@ -316,5 +322,85 @@ public class ContentGrpcService extends ContentServiceGrpc.ContentServiceImplBas
         }
         int endIndex = text.offsetByCodePoints(0, maxLength);
         return text.substring(0, endIndex) + "...";
+    }
+
+    @Override
+    public void adminCreateNotice(AdminCreateNoticeRequest request,
+                                  StreamObserver<AdminCreateNoticeResponse> responseObserver) {
+        try {
+            GrpcIdentityInterceptor.requireAdmin();
+
+            Notice created = noticeCommandService.create(
+                    request.getTitleMap(),
+                    request.getContentMap(),
+                    request.getPostedAt(),
+                    request.getIsPinned(),
+                    request.getIsVisible(),
+                    request.getImageUrl()
+            );
+
+            responseObserver.onNext(AdminCreateNoticeResponse.newBuilder()
+                    .setNotice(toAdminNoticeProto(created))
+                    .build());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(globalGrpcExceptionHandler.toStatusRuntimeException(e));
+        }
+    }
+
+    @Override
+    public void adminUpdateNotice(AdminUpdateNoticeRequest request,
+                                  StreamObserver<AdminUpdateNoticeResponse> responseObserver) {
+        try {
+            GrpcIdentityInterceptor.requireAdmin();
+
+            Notice updated = noticeCommandService.update(
+                    request.getId(),
+                    request.getTitleMap(),
+                    request.getContentMap(),
+                    request.getPostedAt(),
+                    request.getIsPinned(),
+                    request.getIsVisible(),
+                    request.getImageUrl()
+            );
+
+            responseObserver.onNext(AdminUpdateNoticeResponse.newBuilder()
+                    .setNotice(toAdminNoticeProto(updated))
+                    .build());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(globalGrpcExceptionHandler.toStatusRuntimeException(e));
+        }
+    }
+
+    @Override
+    public void adminDeleteNotice(AdminDeleteNoticeRequest request,
+                                  StreamObserver<AdminDeleteNoticeResponse> responseObserver) {
+        try {
+            GrpcIdentityInterceptor.requireAdmin();
+
+            noticeCommandService.delete(request.getId());
+
+            responseObserver.onNext(AdminDeleteNoticeResponse.newBuilder()
+                    .setSuccess(true)
+                    .build());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(globalGrpcExceptionHandler.toStatusRuntimeException(e));
+        }
+    }
+
+    private static AdminNotice toAdminNoticeProto(Notice notice) {
+        return AdminNotice.newBuilder()
+                .setId(notice.getId())
+                .putAllTitle(notice.getTitle())
+                .putAllContent(notice.getContent())
+                .setPostedAt(notice.getPostedAt() == null ? "" : notice.getPostedAt().toString())
+                .setIsPinned(notice.isPinned())
+                .setIsVisible(notice.isVisible())
+                .setImageUrl(notice.getImageUrl() == null ? "" : notice.getImageUrl())
+                .setCreatedAt(notice.getCreatedAt() == null ? "" : notice.getCreatedAt().toString())
+                .setUpdatedAt(notice.getUpdatedAt() == null ? "" : notice.getUpdatedAt().toString())
+                .build();
     }
 }
