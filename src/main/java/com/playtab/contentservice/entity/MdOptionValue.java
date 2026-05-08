@@ -35,4 +35,23 @@ public class MdOptionValue extends BaseTimeEntity {
 
     @Column(name = "display_order", nullable = false)
     private int displayOrder = 0;
+
+    public static MdOptionValue create(MdOptionGroup optionGroup, Map<String, String> valueName,
+                                       int extraPrice, boolean isSoldOut, int displayOrder) {
+        MdOptionValue val = new MdOptionValue();
+        val.optionGroup = optionGroup;
+        val.valueName = new HashMap<>(valueName);
+        val.extraPrice = extraPrice;
+        val.isSoldOut = isSoldOut;
+        val.displayOrder = displayOrder;
+        return val;
+    }
+
+    public void update(Map<String, String> valueName, int extraPrice,
+                       boolean isSoldOut, int displayOrder) {
+        this.valueName = new HashMap<>(valueName);
+        this.extraPrice = extraPrice;
+        this.isSoldOut = isSoldOut;
+        this.displayOrder = displayOrder;
+    }
 }

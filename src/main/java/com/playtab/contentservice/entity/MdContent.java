@@ -43,4 +43,31 @@ public class MdContent extends BaseTimeEntity {
 
     @Column(name = "is_sold_out", nullable = false)
     private boolean isSoldOut = false;
+
+    public static MdContent create(ContentItem contentItem, Map<String, String> name,
+                                   int price, Map<String, String> productDescription,
+                                   Map<String, String> detailDescription,
+                                   String detailImageUrl, boolean isSoldOut) {
+        MdContent md = new MdContent();
+        md.contentItem = contentItem;
+        md.name = new HashMap<>(name);
+        md.price = price;
+        md.productDescription = productDescription != null ? new HashMap<>(productDescription) : new HashMap<>();
+        md.detailDescription = detailDescription != null ? new HashMap<>(detailDescription) : new HashMap<>();
+        md.detailImageUrl = detailImageUrl;
+        md.isSoldOut = isSoldOut;
+        return md;
+    }
+
+    public void update(Map<String, String> name, int price,
+                       Map<String, String> productDescription,
+                       Map<String, String> detailDescription,
+                       String detailImageUrl, boolean isSoldOut) {
+        this.name = new HashMap<>(name);
+        this.price = price;
+        this.productDescription = productDescription != null ? new HashMap<>(productDescription) : new HashMap<>();
+        this.detailDescription = detailDescription != null ? new HashMap<>(detailDescription) : new HashMap<>();
+        this.detailImageUrl = detailImageUrl;
+        this.isSoldOut = isSoldOut;
+    }
 }
