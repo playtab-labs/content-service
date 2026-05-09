@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Map;
 
@@ -73,7 +74,11 @@ public class NoticeCommandService {
         try {
             return LocalDateTime.parse(value);
         } catch (DateTimeParseException e) {
-            throw new ContentServiceException(ErrorCode.INVALID_ARGUMENT);
+            try {
+                return OffsetDateTime.parse(value).toLocalDateTime();
+            } catch (DateTimeParseException e2) {
+                throw new ContentServiceException(ErrorCode.INVALID_ARGUMENT);
+            }
         }
     }
 
