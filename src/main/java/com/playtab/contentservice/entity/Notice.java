@@ -37,7 +37,7 @@ public class Notice extends BaseTimeEntity {
     @Column(name = "is_visible", nullable = false)
     private boolean isVisible = true;
 
-    @Column(name = "image_url", length = 2000)
+    @Column(name = "image_url", columnDefinition = "text")
     private String imageUrl;
 
     public static Notice create(Map<String, String> title, Map<String, String> content,

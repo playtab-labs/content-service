@@ -1,1 +1,1 @@
-alter table notices alter column image_url type varchar(2000);
+alter table notices alter column image_url type text;
