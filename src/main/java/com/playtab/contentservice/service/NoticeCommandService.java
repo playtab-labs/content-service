@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
@@ -73,11 +74,15 @@ public class NoticeCommandService {
         }
         try {
             return LocalDateTime.parse(value);
-        } catch (DateTimeParseException e) {
+        } catch (DateTimeParseException e1) {
             try {
                 return OffsetDateTime.parse(value).toLocalDateTime();
             } catch (DateTimeParseException e2) {
-                throw new ContentServiceException(ErrorCode.INVALID_ARGUMENT);
+                try {
+                    return LocalDate.parse(value).atStartOfDay();
+                } catch (DateTimeParseException e3) {
+                    throw new ContentServiceException(ErrorCode.INVALID_ARGUMENT);
+                }
             }
         }
     }
