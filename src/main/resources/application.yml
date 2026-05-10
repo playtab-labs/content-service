@@ -27,6 +27,7 @@ grpc:
   server:
     port: ${GRPC_PORT:9096}
     reflection-service-enabled: true
+    max-inbound-message-size: 33554432
 
 logging:
   level:
